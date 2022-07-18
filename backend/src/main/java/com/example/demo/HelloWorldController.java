@@ -27,7 +27,7 @@ public class HelloWorldController {
     ArrayList<Solardaten> d=new ArrayList<>();
     int i=0;
     for(Solardaten sd: daten){
-      if(i==id) {
+      if((i+1)==id) {
         sd = daten.get(i);
         d.add(sd);
       }
