@@ -7,6 +7,7 @@ import time
 import requests
 from signal import signal, SIGINT
 from sys import exit
+import json
 
 isrunning = True
 
@@ -41,12 +42,13 @@ if client.connect():
             while isrunning:
                 time.sleep(5)
                 try:
-
-                    response = requests.post('localhost:9000/api/data/add', data={'inputVoltage': result.registers[0]/100,
-                                                                                  'inputAmpere': result.registers[1]/100,
-                                                                                  'batteryVoltage': result.registers[4]/100,
-                                                                                  'outputAmpere': result.registers[5]/100 - result.registers[13]/100
-                                                                                  })
+                    data = {'inputVoltage': result.registers[0]/100,
+                            'inputAmpere': result.registers[1]/100,
+                            'batteryVoltage': result.registers[4]/100,
+                            'outputAmpere': result.registers[5]/100 -
+                            result.registers[13]/100}
+                    print(data)
+                    response = requests.post('http://localhost:8080/api/data/add', json = data)
                 except:
                     print("Bad Request")
         else:
