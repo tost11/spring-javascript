@@ -1,16 +1,18 @@
 import "./style.css";
 
-
+let id=0;
+let id2=0;
 
 window.onload = function () {
   console.log("Hello World!")
   pageValues();
-  //graph1();
+  graph1();
 }
 
-window.pageValues=async()=> {
-  let id = 1;
-  const response = await fetch("/api/data/get/" + id, {
+window.getProduktion=async()=> {
+
+
+  const response=await fetch("/api/data/get/"+id2, {
     method: 'GET',
 
     headers: {
@@ -19,6 +21,22 @@ window.pageValues=async()=> {
     }
   });
 
+  const myJson = await response.json();
+  console.log((myJson.datenlist[id2].inputVoltage) * (myJson.datenlist[id2].inputAmpere))
+  return (myJson.datenlist[id2].inputVoltage) * (myJson.datenlist[id2].inputAmpere);
+}
+
+window.pageValues=async()=> {
+
+  const response = await fetch("/api/data/get/" + id, {
+    method: 'GET',
+
+    headers: {
+      'Conent-Type': 'application/json'
+
+    }
+  });
+  id ++;
   const myJson = await response.json();
   console.log("Daten:", myJson);
 
@@ -54,6 +72,48 @@ window.pageValues=async()=> {
     document.getElementById("werte").appendChild(node3);
 
   }
-
-
 }
+  function graph1() {
+    google.charts.load('current', {
+      packages: ["corechart", "line"]
+    });
+    google.charts.setOnLoadCallback(drawChart);
+  }
+
+
+
+  function drawChart() {
+
+    let data = google.visualization.arrayToDataTable([
+      ["Year", "Produktion"],
+      [0, 0]
+    ]);
+    // create options object with titles, colors, etc.
+    let options = {
+      title: "Solardaten",
+      hAxis: {
+        title: "Time"
+      },
+      vAxis: {
+        title: "Watt"
+      }
+    };
+    // draw chart on load
+    let chart = new google.visualization.LineChart(
+        document.getElementById("myChart")
+    );
+    chart.draw(data, options);
+    // interval for adding new data every 250ms
+    let index = 0;
+    setInterval(function () {
+      // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
+      let random = getProduktion();
+      id2++;
+          data.addRow([index, random]);
+      chart.draw(data, options);
+      index++;
+    }, 1000);
+
+
+
+  }
