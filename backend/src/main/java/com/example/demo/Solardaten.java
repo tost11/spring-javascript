@@ -1,22 +1,32 @@
 package com.example.demo;
+import javax.persistence.*;
+import java.time.ZonedDateTime;
 
-
+@Entity
+@Table(name = "Solardaten")
 public class Solardaten {
     private float inputVoltage;
     private float inputAmpere;
     private float batteryVoltage;
     private float outputAmpere;
-    static private int ID=0;
+    private ZonedDateTime dateTime;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer ID;
+
+
+    static private int auto_ID=0;
 
     public Solardaten(float inputVoltage, float inputAmpere, float batteryVoltage, float outputAmpere) {
         this.inputVoltage = inputVoltage;
         this.inputAmpere = inputAmpere;
         this.batteryVoltage = batteryVoltage;
         this.outputAmpere = outputAmpere;
-        ID++;
+        dateTime = ZonedDateTime.now();
     }
 
     public Solardaten() {
+        dateTime = ZonedDateTime.now();
     }
 
     @Override
@@ -29,6 +39,8 @@ public class Solardaten {
                 '}';
     }
 
+    public void setDateTime(ZonedDateTime time) { dateTime = time; }
+    public ZonedDateTime getDateTime() { return dateTime; }
     public float getInputVoltage() {
         return inputVoltage;
     }
@@ -62,10 +74,11 @@ public class Solardaten {
     }
 
     public static int getID() {
-        return ID;
+        return auto_ID;
     }
 
     public static void setID(int ID) {
-        Solardaten.ID = ID;
+        Solardaten.auto_ID = ID;
     }
+
 }
