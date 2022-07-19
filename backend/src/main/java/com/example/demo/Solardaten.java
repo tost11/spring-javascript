@@ -1,6 +1,6 @@
 package com.example.demo;
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "Solardaten")
@@ -9,7 +9,7 @@ public class Solardaten {
     private float inputAmpere;
     private float batteryVoltage;
     private float outputAmpere;
-    private LocalDateTime dateTime;
+    private ZonedDateTime dateTime;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer ID;
@@ -22,11 +22,11 @@ public class Solardaten {
         this.inputAmpere = inputAmpere;
         this.batteryVoltage = batteryVoltage;
         this.outputAmpere = outputAmpere;
-        dateTime = LocalDateTime.now();
+        dateTime = ZonedDateTime.now();
     }
 
     public Solardaten() {
-        dateTime = LocalDateTime.now();
+        dateTime = ZonedDateTime.now();
     }
 
     @Override
@@ -39,8 +39,8 @@ public class Solardaten {
                 '}';
     }
 
-    public void setDateTime(LocalDateTime time) { dateTime = time; }
-    public LocalDateTime getDateTime() { return dateTime; }
+    public void setDateTime(ZonedDateTime time) { dateTime = time; }
+    public ZonedDateTime getDateTime() { return dateTime; }
     public float getInputVoltage() {
         return inputVoltage;
     }
