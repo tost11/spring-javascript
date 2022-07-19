@@ -28,7 +28,6 @@ public class HelloWorldController {
     int i=0;
     for(Solardaten sd: daten){
       if((i+1)==id) {
-        sd = daten.get(i);
         d.add(sd);
       }
       i++;
