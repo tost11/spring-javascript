@@ -7,6 +7,7 @@ import time
 import requests
 from signal import signal, SIGINT
 from sys import exit
+import json
 
 isrunning = True
 
@@ -28,31 +29,34 @@ signal(SIGINT, signal_handler)
 print("\n\nCheck for data")
 
 client = getClient()
-if client.connect():
-    print("connect")
+while isrunning:
+    if client.connect():
+        print("connect")
 
-    result = client.read_input_registers(0x3100, 19, unit=1)
-    if isinstance(result, Exception):
-        print("Got exception reading 0x3100 - 0x3118")
-        print(result)
-    else:
-        if result.function_code < 0x80:
-            print(result.registers)
-            while isrunning:
+        result = client.read_input_registers(0x3100, 19, unit=1)
+        if isinstance(result, Exception):
+            print("Got exception reading 0x3100 - 0x3118")
+            print(result)
+        else:
+            if result.function_code < 0x80:
+                print(result.registers)
                 time.sleep(5)
                 try:
-
-                    response = requests.post('localhost:9000/api/data/add', data={'inputVoltage': result.registers[0]/100,
-                                                                                  'inputAmpere': result.registers[1]/100,
-                                                                                  'batteryVoltage': result.registers[4]/100,
-                                                                                  'outputAmpere': result.registers[5]/100 - result.registers[13]/100
-                                                                                  })
+                    data = {'inputVoltage': result.registers[0]/100,
+                            'inputAmpere': result.registers[1]/100,
+                            'batteryVoltage': result.registers[4]/100,
+                            'outputAmpere': result.registers[5]/100 -
+                            result.registers[13]/100}
+                    print(data)
+                    response = requests.post('http://localhost:8080/api/data/add', json = data)
                 except:
                     print("Bad Request")
-        else:
-            print("Unable to read 0x3100 - 0x3112")
+            else:
+                print("Unable to read 0x3100 - 0x3112")
 
-    client.close()
+        client.close()
+    else:
+        sleep(5)
 
 """
 inputVoltage
