@@ -4,10 +4,41 @@ import "./style.css";
 
 window.onload = function () {
   console.log("Hello World!")
-  pageValues();
+    latestData()
   //graph1();
 }
 
+window.latestData = async () => {
+    const response = await fetch("/api/data/get/latest", {
+        method: 'GET',
+        headers: {
+            'Conent-Type': 'application/json'
+
+        }
+    });
+    const myJson = await response.json()
+    console.log("Daten:", myJson)
+
+    const node = document.getElementById("AP").innerHTML ="Aktuelle Produktion: " + myJson.inputVoltage * myJson.inputAmpere + "W"
+    const node1 = document.getElementById("AV").innerHTML ="Aktueller Verbrauch: " + myJson.batteryVoltage * myJson.outputAmpere + "W"
+    const node2 = document.getElementById("BV").innerHTML ="Batteriespannung: " + myJson.batteryVoltage + "V"
+
+
+    const lu = document.getElementById("werte")
+    lu.appendChild(node)
+    lu.appendChild(node1)
+    lu.appendChild(node2)
+
+}
+
+setInterval(latestData , 10000 );
+
+
+
+
+
+
+ /*
 window.pageValues=async()=> {
   let id = 1;
   const response = await fetch("/api/data/get/" + id, {
@@ -53,7 +84,6 @@ window.pageValues=async()=> {
     document.getElementById("werte").appendChild(node2);
     document.getElementById("werte").appendChild(node3);
 
-  }
+  }*/
 
 
-}
