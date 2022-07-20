@@ -1,8 +1,11 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
+import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +40,17 @@ public class HelloWorldController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value="/api/data/get/latest")
-    Solardaten latestData(){
-    return solarRepository.findFirst1ByOrderByDateTimeDesc();
+    ResponseEntity<Solardaten> latestData(){
+    Solardaten latest = solarRepository.findFirst1ByOrderByDateTimeDesc();
+    if(latest.getDateTime().isBefore(ZonedDateTime.now().minusMinutes(1)))
+      return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+    return new ResponseEntity<>(latest, HttpStatus.OK);
+
     }
 
   @RequestMapping(method= RequestMethod.GET, value="/api/data/get/{sekunden}")
   List<Solardaten> getData(@PathVariable Long sekunden) {
+    Solardaten latest = solarRepository.findFirst1ByOrderByDateTimeDesc();
   List<Solardaten> werte = solarRepository.findAllByDateTimeAfterOrderByDateTime(ZonedDateTime.now().minusSeconds(sekunden));
   ArrayList<Solardaten> returns = new ArrayList<Solardaten>();
   int i = 0;
@@ -72,6 +80,7 @@ public class HelloWorldController {
 
   if(!returns.isEmpty())
     return returns;
+
   return werte;
   }
 }

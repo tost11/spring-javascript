@@ -53,7 +53,7 @@ async function drawChart() {
         data.addRow([index, wert1, wert2]);
         chart.draw(data, options);
         index++;
-    }, 500);
+    }, 5000);
 
 
 
@@ -120,7 +120,7 @@ async function batteryChart() {
         data.addRow([index, wert]);
         chart.draw(data, options);
         index++;
-    }, 500);
+    }, 5000);
 }
 
 

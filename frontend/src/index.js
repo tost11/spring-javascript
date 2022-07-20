@@ -4,6 +4,7 @@ import {fetchLatest} from "./requests";
 import {graph1, graph2} from "./graphen";
 
 
+
 //
 //------- Aufruf der ersten zwei Graphen
 //
@@ -25,15 +26,24 @@ window.onload = function () {
 //
 
 window.latestData = async () => {
-   const myJson = await fetchLatest();
-
   const node = document.getElementById("AP")
-  node.innerText ="Aktuelle Produktion: " + myJson.inputVoltage * myJson.inputAmpere + "W"
   const node1 = document.getElementById("AV")
-  node1.innerText ="Aktueller Verbrauch: " + myJson.batteryVoltage * myJson.outputAmpere + "W"
   const node2 = document.getElementById("BV")
+
+  try{
+  const myJson = await fetchLatest();
+  node.innerText ="Aktuelle Produktion: " + myJson.inputVoltage * myJson.inputAmpere + "W"
+  node1.innerText ="Aktueller Verbrauch: " + myJson.batteryVoltage * myJson.outputAmpere + "W"
   node2.innerText ="Batteriespannung: " + myJson.batteryVoltage + "V"
 
+}catch{
+  console.log("Keine Daten vorhanden!")
+    node.innerText ="Aktuelle Produktion: Keine Daten vorhanden"
+    node1.innerText ="Aktueller Verbrauch: Keine Daten vorhanden"
+    node2.innerText ="Batteriespannung: Keine Daten vorhanden"
+
+
+}
 }
 
 setInterval(latestData , 10000 );
@@ -50,25 +60,35 @@ setInterval(latestData , 10000 );
 
 window.getProduktion = async () =>{
 
-  const myJson = await fetchLatest()
-  console.log("myJson:", myJson.inputVoltage * myJson.inputAmpere)
-  return myJson.inputVoltage * myJson.inputAmpere
+  try {
+    const myJson = await fetchLatest()
+    if (myJson.isEmpty())
+      return myJson.inputVoltage * myJson.inputAmpere
+  }catch{
+    console.log("Keine Daten vorhanden!")
+  }
 }
 
 window.getBatteryVoltage = async () =>{
-
+  try {
   const myJson = await fetchLatest()
-  console.log("myJsom:", myJson.batteryVoltage)
+  if (myJson.isEmpty())
+    return 0;
   return myJson.batteryVoltage
-
+  }catch{
+    console.log("Keine Daten vorhanden!")
+  }
 }
 
 window.getVerbrauch = async () =>{
-
+  try {
   const myJson = await fetchLatest()
-  console.log("myJsom:", myJson.batteryVoltage * myJson.outputAmpere)
+  if(myJson.isEmpty())
+    return 0;
   return myJson.batteryVoltage * myJson.outputAmpere
-
+  }catch{
+    console.log("Keine Daten vorhanden!")
+  }
 }
 
 
