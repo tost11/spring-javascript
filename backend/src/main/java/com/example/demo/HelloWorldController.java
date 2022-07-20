@@ -3,6 +3,7 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,34 +32,47 @@ public class HelloWorldController {
     @RequestMapping(method=RequestMethod.POST, value="/api/data/add")
     public void neuesObj(@RequestBody Solardaten data){
     solarRepository.save(data);
-   // daten.add(data);
+    //daten.add(data);
       System.out.println(data);
     }
 
-  @RequestMapping(method= RequestMethod.GET, value="/api/data/get/{id}")
-  List<Solardaten> getData(@PathVariable Integer id) {
-
-    return solarRepository.findAllByID(id);
-
-
-    /*
-    ArrayList<Solardaten> daten =new ArrayList<>();
-    int i=0;
-    for(Solardaten sd: daten){
-      if((i+1)==id) {
-        d.add(sd);
-      }
-      i++;
+    @RequestMapping(method = RequestMethod.GET, value="/api/data/get/latest")
+    Solardaten latestData(){
+    return solarRepository.findFirst1ByOrderByDateTimeDesc();
     }
-    if(d.size() != 0) {
-      SolardatenDTO obj = new SolardatenDTO(d);
-      return obj;
-    }
-    else{
-      return null;
-    }
-    */
 
+  @RequestMapping(method= RequestMethod.GET, value="/api/data/get/{sekunden}")
+  List<Solardaten> getData(@PathVariable Long sekunden) {
+  List<Solardaten> werte = solarRepository.findAllByDateTimeAfterOrderByDateTimeDesc(ZonedDateTime.now().minusSeconds(sekunden));
+  ArrayList<Solardaten> returns = new ArrayList<Solardaten>();
+  int i = 0;
+  float IV = 0;
+  float IA = 0;
+  float BV = 0;
+  float OA = 0;
+
+  for(Solardaten solar : werte){
+    IV += solar.getInputVoltage();
+    IA += solar.getInputAmpere();
+    BV += solar.getBatteryVoltage();
+    OA += solar.getOutputAmpere();
+    i++;
+    if(i >= werte.size() / 100){
+      IV /= werte.size() / 100.f;
+      IA /= werte.size() / 100.f;
+      BV /= werte.size() / 100.f;
+      OA /= werte.size() / 100.f;
+
+     returns.add(new Solardaten(IV, IA, BV, OA));
+
+     i = 0;
+     IV = IA = BV = OA = 0.f;
+    }
+  }
+
+  if(!returns.isEmpty())
+    return returns;
+  return werte;
   }
 }
 

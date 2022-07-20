@@ -45,6 +45,7 @@ public class Solardaten {
         return inputVoltage;
     }
 
+
     public void setInputVoltage(float inputVoltage) {
         this.inputVoltage = inputVoltage;
     }
