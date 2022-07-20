@@ -33,10 +33,7 @@ window.latestData = async () => {
   const node2 = document.getElementById("BV")
   node2.innerText ="Batteriespannung: " + myJson.batteryVoltage + "V"
 
-    const lu = document.getElementById("werte")
-    lu.appendChild(node)
-    lu.appendChild(node1)
-    lu.appendChild(node2)
+
 
 }
 
@@ -111,9 +108,12 @@ window.getVerbrauch = async () =>{
       title: "Aktuelle Solardaten",
       hAxis: {
         title: "Time"
+
       },
       vAxis: {
-        title: "Watt"
+        title: "Watt",
+        maxValue: 15,
+        minValue: 10
       }
     };
     // draw chart on load
