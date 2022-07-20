@@ -1,11 +1,18 @@
 import "./style.css";
 
-
+let id=0;
+let id2=0;
+let id3=0;
+let id4=0;
+let zeitraum=0;
 
 window.onload = function () {
   console.log("Hello World!")
     latestData()
   //graph1();
+  //pageValues();
+  graph1();
+  graph2();
 }
 
 window.latestData = async () => {
@@ -84,6 +91,157 @@ window.pageValues=async()=> {
     document.getElementById("werte").appendChild(node2);
     document.getElementById("werte").appendChild(node3);
 
-  }*/
+  }
+}
+*/
 
 
+
+
+  function graph1() {
+    google.charts.load('current', {
+      packages: ["corechart", "line"]
+    });
+    google.charts.setOnLoadCallback(drawChart);
+  }
+
+
+
+  function drawChart() {
+
+    let data = google.visualization.arrayToDataTable([
+      ["Year", "Produktion", "Verbrauch"],
+      [0, 0, 0],
+
+    ]);
+
+    // create options object with titles, colors, etc.
+    let options = {
+      title: "Solardaten",
+      hAxis: {
+        title: "Time"
+      },
+      vAxis: {
+        title: "Watt"
+      }
+    };
+    // draw chart on load
+    let chart = new google.visualization.LineChart(
+        document.getElementById("myChart")
+    );
+    chart.draw(data, options);
+
+    // interval for adding new data every 250ms
+    let index = 0;
+    id2=0;
+    setInterval(function () {
+      // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
+      let random = Math.random() * 30 + 20;
+      let random2=Math.random()*10+5;
+      id2++;
+          data.addRow([index, random, random2]);
+      chart.draw(data, options);
+      index++;
+    }, 500);
+
+
+
+  }
+
+
+function graph2() {
+  google.charts.load('current', {
+    packages: ["corechart", "line"]
+  });
+  google.charts.setOnLoadCallback(batteryChart);
+}
+
+function batteryChart() {
+
+  let data = google.visualization.arrayToDataTable([
+    ["Year", "Batteriespannung"],
+    [0, 0],
+
+  ]);
+
+  // create options object with titles, colors, etc.
+  let options = {
+    title: " ",
+    hAxis: {
+      title: "Time"
+    },
+    vAxis: {
+      title: "Volt"
+    }
+  };
+  // draw chart on load
+  let chart = new google.visualization.LineChart(
+      document.getElementById("myChart2")
+  );
+  chart.draw(data, options);
+
+  // interval for adding new data every 250ms
+  let index = 0;
+  id3 = 0;
+  setInterval(function () {
+    // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
+    let random = Math.random() * 30 + 20;
+
+    id3++;
+    data.addRow([index, random]);
+    chart.draw(data, options);
+    index++;
+  }, 500);
+}
+
+const btn = document.getElementById("wahl")
+btn.onclick=()=>{
+  var getValue = document.getElementById('zeitraum').selectedOptions[0].value;
+  console.log(getValue);
+  graph3();
+}
+
+function graph3() {
+
+  google.charts.load('current', {
+    packages: ["corechart", "line"]
+  });
+  google.charts.setOnLoadCallback(oldValues);
+}
+
+function oldValues() {
+
+  let data = google.visualization.arrayToDataTable([
+    ["Year", "Produktion", "Verbrauch"],
+    [0, 0, 0],
+
+  ]);
+
+  // create options object with titles, colors, etc.
+  let options = {
+    title: "Zeitraum",
+    hAxis: {
+      title: "Time"
+    },
+    vAxis: {
+      title: "Watt"
+    }
+  };
+  // draw chart on load
+  let chart = new google.visualization.LineChart(
+      document.getElementById("myChart3")
+  );
+  chart.draw(data, options);
+  // interval for adding new data every 250ms
+  let index = 0;
+  id4 = 0;
+  setInterval(function () {
+    // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
+    let random = Math.random() * 30 + 20;
+    let random2 = Math.random() * 10 + 5;
+    id4++;
+    data.addRow([index, random, random2]);
+    chart.draw(data, options);
+    index++;
+  }, 500);
+}
