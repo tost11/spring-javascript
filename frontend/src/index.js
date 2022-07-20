@@ -115,8 +115,7 @@ window.getVerbrauch = async () =>{
       },
       vAxis: {
         title: "Watt",
-        maxValue: 15,
-        minValue: 10
+
       }
     };
     // draw chart on load
