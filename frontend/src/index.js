@@ -114,8 +114,7 @@ window.getVerbrauch = async () =>{
         title: "Time"
       },
       vAxis: {
-        title: "Watt",
-
+        title: "Watt"
       }
     };
     // draw chart on load
@@ -169,7 +168,12 @@ function batteryChart() {
       title: "Time"
     },
     vAxis: {
-      title: "Volt"
+      title: "Volt",
+      viewWindowMode:'explicit',
+      viewWindow: {
+        max:15,
+        min:10
+      }
     }
   };
   // draw chart on load
@@ -199,8 +203,8 @@ function batteryChart() {
 
 const btn = document.getElementById("wahl")
 btn.onclick=()=>{
-  var getValue = document.getElementById('zeitraum').selectedOptions[0].value;
-  console.log(getValue);
+
+
   graph3();
 }
 
@@ -212,7 +216,17 @@ function graph3() {
   google.charts.setOnLoadCallback(oldValues);
 }
 
-function oldValues() {
+async function oldValues() {
+
+  const response = await fetch("/api/data/get/" + document.getElementById('zeitraum').selectedOptions[0].value, {
+    method: 'GET',
+    headers: {
+      'Conent-Type': 'application/json'
+
+    }
+  });
+  const myJson = await response.json()
+  console.log("Daten:", myJson)
 
   let data = google.visualization.arrayToDataTable([
     ["Year", "Produktion", "Verbrauch"],
@@ -237,15 +251,23 @@ function oldValues() {
   chart.draw(data, options);
   // interval for adding new data every 250ms
   let index = 0;
-  id4=0;
+  id4 = 0;
+
+  for(let wert of myJson){
+    data.addRow([index, wert.inputVoltage * wert.inputAmpere, wert.batteryVoltage * wert.outputAmpere])
+    chart.draw(data, options)
+    index++;
+  }
+
+  /*
   setInterval(function () {
     // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
     let random = Math.random() * 30 + 20;
-    let random2=Math.random()*10+5;
+    let random2 = Math.random() * 10 + 5;
     id4++;
     data.addRow([index, random, random2]);
     chart.draw(data, options);
     index++;
-  }, 500);
-
+  }, 1); */
 }
+

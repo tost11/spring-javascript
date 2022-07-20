@@ -13,5 +13,5 @@ public interface SolarRepository extends PagingAndSortingRepository<Solardaten, 
     List<Solardaten> findAllByID(Integer ID);
     Solardaten findFirst1ByOrderByDateTimeDesc();
 
-    List<Solardaten> findAllByDateTimeAfterOrderByDateTimeDesc(ZonedDateTime dateTime);
+    List<Solardaten> findAllByDateTimeAfterOrderByDateTime(ZonedDateTime dateTime);
 }

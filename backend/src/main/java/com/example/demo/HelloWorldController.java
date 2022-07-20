@@ -43,7 +43,7 @@ public class HelloWorldController {
 
   @RequestMapping(method= RequestMethod.GET, value="/api/data/get/{sekunden}")
   List<Solardaten> getData(@PathVariable Long sekunden) {
-  List<Solardaten> werte = solarRepository.findAllByDateTimeAfterOrderByDateTimeDesc(ZonedDateTime.now().minusSeconds(sekunden));
+  List<Solardaten> werte = solarRepository.findAllByDateTimeAfterOrderByDateTime(ZonedDateTime.now().minusSeconds(sekunden));
   ArrayList<Solardaten> returns = new ArrayList<Solardaten>();
   int i = 0;
   float IV = 0;
