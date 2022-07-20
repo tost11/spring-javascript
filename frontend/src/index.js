@@ -1,30 +1,31 @@
 import "./style.css";
+import "./graphen.js";
+import {fetchLatest} from "./requests";
+import {graph1, graph2} from "./graphen";
 
-let id=0;
-let id2=0;
-let id3=0;
-let id4=0;
-let zeitraum=0;
+
+//
+//------- Aufruf der ersten zwei Graphen
+//
+
 
 window.onload = function () {
   console.log("Hello World!")
-    latestData()
+  latestData()
   //graph1();
   //pageValues();
   graph1();
   graph2();
 }
 
-window.latestData = async () => {
-    const response = await fetch("/api/data/get/latest", {
-        method: 'GET',
-        headers: {
-            'Conent-Type': 'application/json'
 
-        }
-    });
-    const myJson = await response.json()
-    console.log("Daten:", myJson)
+
+//
+//----------- Update der angezeigten Daten
+//
+
+window.latestData = async () => {
+   const myJson = await fetchLatest();
 
   const node = document.getElementById("AP")
   node.innerText ="Aktuelle Produktion: " + myJson.inputVoltage * myJson.inputAmpere + "W"
@@ -33,241 +34,47 @@ window.latestData = async () => {
   const node2 = document.getElementById("BV")
   node2.innerText ="Batteriespannung: " + myJson.batteryVoltage + "V"
 
-
-
 }
 
 setInterval(latestData , 10000 );
 
+
+
+
+
+
+//
+//------------ Funktionen für einzelde Werte
+//
+
+
 window.getProduktion = async () =>{
-  const response = await fetch("/api/data/get/latest", {
-    method: 'GET',
 
-    headers: {
-      'Conent-Type': 'application/json'
-
-    }
-  });
-  const myJson = await response.json()
-  console.log("myJsom:", myJson.inputVoltage * myJson.inputAmpere)
-  const p = myJson.inputVoltage * myJson.inputAmpere
-
-  return p;
+  const myJson = await fetchLatest()
+  console.log("myJson:", myJson.inputVoltage * myJson.inputAmpere)
+  return myJson.inputVoltage * myJson.inputAmpere
 }
 
 window.getBatteryVoltage = async () =>{
-  const response = await fetch("/api/data/get/latest", {
-    method: 'GET',
 
-    headers: {
-      'Conent-Type': 'application/json'
-
-    }
-  });
-  const myJson = await response.json()
+  const myJson = await fetchLatest()
   console.log("myJsom:", myJson.batteryVoltage)
-  const bv = myJson.batteryVoltage
+  return myJson.batteryVoltage
 
-  return bv;
 }
 
 window.getVerbrauch = async () =>{
-  const response = await fetch("/api/data/get/latest", {
-    method: 'GET',
-    headers: {
-      'Conent-Type': 'application/json'
 
-    }
-  });
-  const myJson = await response.json()
+  const myJson = await fetchLatest()
   console.log("myJsom:", myJson.batteryVoltage * myJson.outputAmpere)
-  const v = myJson.batteryVoltage * myJson.outputAmpere
+  return myJson.batteryVoltage * myJson.outputAmpere
 
-  return v;
 }
 
 
 
 
 
-  function graph1() {
-    google.charts.load('current', {
-      packages: ["corechart", "line"]
-    });
-    google.charts.setOnLoadCallback(drawChart);
-  }
 
 
-
-  function drawChart() {
-
-    let data = google.visualization.arrayToDataTable([
-      ["Year", "Produktion", "Verbrauch"],
-      [0, 0, 0],
-
-    ]);
-
-    // create options object with titles, colors, etc.
-    let options = {
-      title: "Aktuelle Solardaten",
-      hAxis: {
-        title: "Time"
-      },
-      vAxis: {
-        title: "Watt"
-      }
-    };
-    // draw chart on load
-    let chart = new google.visualization.LineChart(
-        document.getElementById("myChart")
-    );
-    chart.draw(data, options);
-
-    // interval for adding new data every 250ms
-    let index = 0;
-    id2=0;
-    let counter =0;
-    setInterval(async function () {
-      // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
-      const wert1 = await getProduktion();
-      const wert2 = await getVerbrauch();
-      counter++;
-      if(counter===400){
-        graph1();
-      }
-      id2++;
-          data.addRow([index, wert1, wert2]);
-      chart.draw(data, options);
-      index++;
-    }, 500);
-
-
-
-  }
-
-
-function graph2() {
-  google.charts.load('current', {
-    packages: ["corechart", "line"]
-  });
-  google.charts.setOnLoadCallback(batteryChart);
-}
-
-function batteryChart() {
-
-  let data = google.visualization.arrayToDataTable([
-    ["Year", "Batteriespannung"],
-    [0, 0],
-
-  ]);
-
-  // create options object with titles, colors, etc.
-  let options = {
-    title: " ",
-    hAxis: {
-      title: "Time"
-    },
-    vAxis: {
-      title: "Volt",
-      viewWindowMode:'explicit',
-      viewWindow: {
-        max:15,
-        min:10
-      }
-    }
-  };
-  // draw chart on load
-  let chart = new google.visualization.LineChart(
-      document.getElementById("myChart2")
-  );
-  chart.draw(data, options);
-
-  // interval for adding new data every 250ms
-  let index = 0;
-  id3 = 0;
-  let counter=0;
-  setInterval(async function () {
-    // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
-    const wert = await getBatteryVoltage();
-    console.log("BV:", wert)
-    counter++;
-    if (counter === 400) {
-      graph2();
-    }
-    id3++;
-    data.addRow([index, wert]);
-    chart.draw(data, options);
-    index++;
-  }, 500);
-}
-
-const btn = document.getElementById("wahl")
-btn.onclick=()=>{
-
-
-  graph3();
-}
-
-function graph3() {
-
-  google.charts.load('current', {
-    packages: ["corechart", "line"]
-  });
-  google.charts.setOnLoadCallback(oldValues);
-}
-
-async function oldValues() {
-
-  const response = await fetch("/api/data/get/" + document.getElementById('zeitraum').selectedOptions[0].value, {
-    method: 'GET',
-    headers: {
-      'Conent-Type': 'application/json'
-
-    }
-  });
-  const myJson = await response.json()
-  console.log("Daten:", myJson)
-
-  let data = google.visualization.arrayToDataTable([
-    ["Year", "Produktion", "Verbrauch"],
-    [0, 0, 0],
-
-  ]);
-
-  // create options object with titles, colors, etc.
-  let options = {
-    title: "Zeitraum",
-    hAxis: {
-      title: "Time"
-    },
-    vAxis: {
-      title: "Watt"
-    }
-  };
-  // draw chart on load
-  let chart = new google.visualization.LineChart(
-      document.getElementById("myChart3")
-  );
-  chart.draw(data, options);
-  // interval for adding new data every 250ms
-  let index = 0;
-  id4 = 0;
-
-  for(let wert of myJson){
-    data.addRow([index, wert.inputVoltage * wert.inputAmpere, wert.batteryVoltage * wert.outputAmpere])
-    chart.draw(data, options)
-    index++;
-  }
-
-  /*
-  setInterval(function () {
-    // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
-    let random = Math.random() * 30 + 20;
-    let random2 = Math.random() * 10 + 5;
-    id4++;
-    data.addRow([index, random, random2]);
-    chart.draw(data, options);
-    index++;
-  }, 1); */
-}
 
