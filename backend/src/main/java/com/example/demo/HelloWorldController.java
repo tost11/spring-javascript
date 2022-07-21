@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,29 @@ public class HelloWorldController {
       System.out.println(data);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/api/data/get/Wh")
+    public Wh WattStunden(){
+    float verbrauch = 0.f;
+    float produktion = 0.f;
+    ZonedDateTime start = null;
+    List<Solardaten> daten = solarRepository.findAll();
+    Wh wh = new Wh(0.f, 0.f);
+    for(Solardaten tmp : daten){
+      if(start == null) {
+        start = tmp.getDateTime();
+        continue;
+      }
+      wh.addWh(tmp.getBatteryVoltage() * tmp.getOutputAmpere(), tmp.getInputAmpere() * tmp.getInputVoltage());
+
+    }
+    System.out.println(wh.getWh_production());
+    System.out.println(wh.getWh_verbrauch());
+
+
+
+    return wh;
+    }
+
     @RequestMapping(method = RequestMethod.GET, value="/api/data/get/latest")
     ResponseEntity<Solardaten> latestData(){
     Solardaten latest = solarRepository.findFirst1ByOrderByDateTimeDesc();
@@ -66,10 +90,10 @@ public class HelloWorldController {
     OA += solar.getOutputAmpere();
     i++;
     if(i >= werte.size() / 100){
-      IV /= werte.size() / 100.f;
-      IA /= werte.size() / 100.f;
-      BV /= werte.size() / 100.f;
-      OA /= werte.size() / 100.f;
+      IV /= i;
+      IA /= i;
+      BV /= i;
+      OA /= i;
 
      returns.add(new Solardaten(IV, IA, BV, OA));
 

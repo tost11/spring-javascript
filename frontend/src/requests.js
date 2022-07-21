@@ -22,6 +22,17 @@ async  function fetchWithSeconds(seconds){
     return await response.json()
 }
 
+async function fetchWh(){
+    const response = await fetch("/api/data/get/Wh", {
+        method: 'GET',
+        headers: {
+            'Conent-Type': 'application/json'
 
-export {fetchLatest, fetchWithSeconds}
+        }
+    });
+    return await response.json();
+}
+
+
+export {fetchLatest, fetchWithSeconds, fetchWh}
 

@@ -1,6 +1,6 @@
 import "./style.css";
 import "./graphen.js";
-import {fetchLatest} from "./requests";
+import {fetchLatest, fetchWh} from "./requests";
 import {graph1, graph2} from "./graphen";
 
 
@@ -13,10 +13,12 @@ import {graph1, graph2} from "./graphen";
 window.onload = function () {
   console.log("Hello World!")
   latestData()
+  whanzeigen()
   //graph1();
   //pageValues();
   graph1();
   graph2();
+
 }
 
 
@@ -46,6 +48,20 @@ window.latestData = async () => {
 }
 }
 
+async function whanzeigen(){
+  const whV = document.getElementById("whV")
+  const whP = document.getElementById("whP")
+  try {
+    const myJson = await fetchWh();
+    whV.innerText = "Gesamte Produktion: " + myJson.wh_production + "Wh"
+    whP.innerText = "Gesamter Verbrauch: " + myJson.wh_verbrauch + "Wh"
+  }catch {
+    whV.innerText = "Gesamte Produktion: Keine Daten vorhanden"
+    whP.innerText = "Gesamter Verbrauch: Keine Daten vorhanden"
+  }
+}
+
+setInterval(whanzeigen, 60000)
 setInterval(latestData , 10000 );
 
 
@@ -62,7 +78,6 @@ window.getProduktion = async () =>{
 
   try {
     const myJson = await fetchLatest()
-    if (myJson.isEmpty())
       return myJson.inputVoltage * myJson.inputAmpere
   }catch{
     console.log("Keine Daten vorhanden!")
@@ -72,8 +87,6 @@ window.getProduktion = async () =>{
 window.getBatteryVoltage = async () =>{
   try {
   const myJson = await fetchLatest()
-  if (myJson.isEmpty())
-    return 0;
   return myJson.batteryVoltage
   }catch{
     console.log("Keine Daten vorhanden!")
@@ -83,8 +96,6 @@ window.getBatteryVoltage = async () =>{
 window.getVerbrauch = async () =>{
   try {
   const myJson = await fetchLatest()
-  if(myJson.isEmpty())
-    return 0;
   return myJson.batteryVoltage * myJson.outputAmpere
   }catch{
     console.log("Keine Daten vorhanden!")
