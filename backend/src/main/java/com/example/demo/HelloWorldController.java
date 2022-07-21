@@ -72,6 +72,11 @@ public class HelloWorldController {
 
     }
 
+    @RequestMapping(method=RequestMethod.GET, value="/api/data/get/oldestDate")
+    Solardaten oldestData(){
+    return solarRepository.findFirstDateTimeByOrderByDateTimeAsc();
+    }
+
   @RequestMapping(method= RequestMethod.GET, value="/api/data/get/{sekunden}")
   List<Solardaten> getData(@PathVariable Long sekunden) {
     Solardaten latest = solarRepository.findFirst1ByOrderByDateTimeDesc();
@@ -107,5 +112,40 @@ public class HelloWorldController {
 
   return werte;
   }
+
+  @RequestMapping(method= RequestMethod.GET, value="/api/data/get/tage/{tage}")
+  List<Solardaten> getDatumData(@PathVariable Long tage) {
+    List<Solardaten> werte = solarRepository.findAllByDateTimeAfterOrderByDateTime(ZonedDateTime.now().minusDays(tage));
+    ArrayList<Solardaten> returns = new ArrayList<Solardaten>();
+    int i = 0;
+    float IV = 0;
+    float IA = 0;
+    float BV = 0;
+    float OA = 0;
+
+    for(Solardaten solar : werte){
+      IV += solar.getInputVoltage();
+      IA += solar.getInputAmpere();
+      BV += solar.getBatteryVoltage();
+      OA += solar.getOutputAmpere();
+      i++;
+      if(i >= werte.size() / 100){
+        IV /= i;
+        IA /= i;
+        BV /= i;
+        OA /= i;
+
+        returns.add(new Solardaten(IV, IA, BV, OA));
+
+        i = 0;
+        IV = IA = BV = OA = 0.f;
+      }
+    }
+
+    if(!returns.isEmpty())
+      return returns;
+    return werte;
+  }
+
 }
 
