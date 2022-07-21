@@ -1,5 +1,6 @@
 import "./style.css";
 
+
 let id=0;
 let id2=0;
 let id3=0;
@@ -9,8 +10,7 @@ let zeitraum=0;
 window.onload = function () {
   console.log("Hello World!")
     latestData()
-  //graph1();
-  //pageValues();
+  Datum();
   graph1();
   graph2();
 }
@@ -39,7 +39,7 @@ window.latestData = async () => {
 
 setInterval(latestData , 10000 );
 
-window.getProduktion = async () =>{
+window.getWerte = async () =>{
   const response = await fetch("/api/data/get/latest", {
     method: 'GET',
 
@@ -49,41 +49,12 @@ window.getProduktion = async () =>{
     }
   });
   const myJson = await response.json()
-  console.log("myJsom:", myJson.inputVoltage * myJson.inputAmpere)
-  const p = myJson.inputVoltage * myJson.inputAmpere
 
-  return p;
-}
+  //Produktion: myJson.inputVoltage * myJson.inputAmpere
+  //myJson.batteryVoltage
+  //Verbrauch: myJson.batteryVoltage * myJson.outputAmpere
 
-window.getBatteryVoltage = async () =>{
-  const response = await fetch("/api/data/get/latest", {
-    method: 'GET',
-
-    headers: {
-      'Conent-Type': 'application/json'
-
-    }
-  });
-  const myJson = await response.json()
-  console.log("myJsom:", myJson.batteryVoltage)
-  const bv = myJson.batteryVoltage
-
-  return bv;
-}
-
-window.getVerbrauch = async () =>{
-  const response = await fetch("/api/data/get/latest", {
-    method: 'GET',
-    headers: {
-      'Conent-Type': 'application/json'
-
-    }
-  });
-  const myJson = await response.json()
-  console.log("myJsom:", myJson.batteryVoltage * myJson.outputAmpere)
-  const v = myJson.batteryVoltage * myJson.outputAmpere
-
-  return v;
+  return myJson;
 }
 
 
@@ -123,14 +94,15 @@ window.getVerbrauch = async () =>{
     );
     chart.draw(data, options);
 
-    // interval for adding new data every 250ms
     let index = 0;
     id2=0;
     let counter =0;
     setInterval(async function () {
-      // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
-      const wert1 = await getProduktion();
-      const wert2 = await getVerbrauch();
+
+      const json = await getWerte();
+      const wert1=json.inputVoltage*json.inputAmpere
+      const wert2=json.batteryVoltage*json.outputAmpere
+      console.log("p: ", wert1)
       counter++;
       if(counter===400){
         graph1();
@@ -139,7 +111,7 @@ window.getVerbrauch = async () =>{
           data.addRow([index, wert1, wert2]);
       chart.draw(data, options);
       index++;
-    }, 500);
+    }, 5000);
 
 
 
@@ -188,8 +160,8 @@ function batteryChart() {
   let counter=0;
   setInterval(async function () {
     // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
-    const wert = await getBatteryVoltage();
-    console.log("BV:", wert)
+    const json = await getWerte();
+    const wert=json.batteryVoltage;
     counter++;
     if (counter === 400) {
       graph2();
@@ -198,7 +170,7 @@ function batteryChart() {
     data.addRow([index, wert]);
     chart.draw(data, options);
     index++;
-  }, 500);
+  }, 5000);
 }
 
 const btn = document.getElementById("wahl")
@@ -226,7 +198,7 @@ async function oldValues() {
     }
   });
   const myJson = await response.json()
-  console.log("Daten:", myJson)
+
 
   let data = google.visualization.arrayToDataTable([
     ["Year", "Produktion", "Verbrauch"],
@@ -259,15 +231,105 @@ async function oldValues() {
     index++;
   }
 
-  /*
-  setInterval(function () {
-    // instead of this random, you can make an ajax call for the current cpu usage or what ever data you want to display
-    let random = Math.random() * 30 + 20;
-    let random2 = Math.random() * 10 + 5;
-    id4++;
-    data.addRow([index, random, random2]);
-    chart.draw(data, options);
-    index++;
-  }, 1); */
 }
 
+async function Datum() {
+
+  const heute = new Date();
+  let month = "" + (heute.getMonth() + 1);
+  let day = "" + heute.getDate();
+  let year = heute.getFullYear();
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+  let aktuell = [year, month, day-1].join("-");
+
+
+  const dateControl = document.getElementById("start");
+  dateControl.value = aktuell;
+  dateControl.max = aktuell;
+
+  const response = await fetch("/api/data/get/oldestDate", {
+    method: 'GET',
+    headers: {
+      'Conent-Type': 'application/json'
+
+    }
+  });
+  const myJson = await response.json()
+
+  const min = new Date(myJson.dateTime);
+
+  let month1 = "" + (min.getMonth() + 1);
+  let day1 = "" + min.getDate();
+  let year1 = min.getFullYear();
+  if (month1.length < 2) month1 = "0" + month1;
+  if (day1.length < 2) day1 = "0" + day1;
+  dateControl.min = [year1, month1, day1].join("-");
+
+}
+
+const button = document.getElementById("datumswahl")
+  button.onclick = () => {
+    graph4();
+
+}
+
+function graph4() {
+
+  google.charts.load('current', {
+    packages: ["corechart", "line"]
+  });
+  google.charts.setOnLoadCallback(WerteAbDatum);
+}
+
+async function WerteAbDatum() {
+
+  console.log("auswahl: ", document.getElementById('start').value)
+  const datum=new Date(document.getElementById('start').value);
+  const aktuell= new Date();
+  const jahrUnterschied=365*(aktuell.getFullYear()-datum.getFullYear());
+  const monatUnterschied=30*(aktuell.getMonth()-datum.getMonth());
+  const tagUnterschied=aktuell.getDay()-datum.getDay();
+  const taganzahl=jahrUnterschied+monatUnterschied+tagUnterschied;
+  console.log("unterschied: ", taganzahl);
+
+  const response = await fetch("/api/data/get/tage/" + taganzahl, {
+    method: 'GET',
+    headers: {
+      'Conent-Type': 'application/json'
+
+    }
+  });
+  const myJson = await response.json()
+  console.log("wert von datum: ", myJson)
+
+  let data = google.visualization.arrayToDataTable([
+    ["Year", "Produktion", "Verbrauch"],
+    [0, 0, 0],
+
+  ]);
+
+  let options = {
+    title: "Zeitraum",
+    hAxis: {
+      title: "Time"
+    },
+    vAxis: {
+      title: "Watt"
+    }
+  };
+
+  let chart = new google.visualization.LineChart(
+      document.getElementById("myChart4")
+  );
+  chart.draw(data, options);
+
+  let index = 0;
+
+  for(let wert of myJson){
+    data.addRow([index, wert.inputVoltage * wert.inputAmpere, wert.batteryVoltage * wert.outputAmpere])
+    chart.draw(data, options)
+    index++;
+  }
+
+}

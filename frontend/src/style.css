@@ -1,0 +1,54 @@
+
+
+h1{
+    font-size: 50px;
+    text-align: center;
+    text-decoration: underline;
+    color: midnightblue;
+}
+
+
+p2{
+    font-size:20px;
+    text-decoration: underline;
+    color: darkblue;
+}
+
+
+button {
+    background-color: darkblue;
+    border: 2px  solid black;
+    color: white;
+    padding: 2px 15px;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    position: relative;
+    right: -20px;
+    border-radius: 8px;
+    transition-duration: 0.05s;
+}
+
+button:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+button:hover{
+    background-color: darkcyan;
+}
+
+button:focus{
+    background-color: mediumaquamarine;
+}
+
+body{
+    background-color: cornsilk;
+}
+
+li{
+    font-size: 20px;
+}
+
+
+

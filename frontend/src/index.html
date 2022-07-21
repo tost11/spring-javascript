@@ -4,21 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My First Page</title>
-
-
+  <link rel="icon" type="image/png" href="assets/icons8-solarpaneel-64.png">
 </head>
 <body>
-<h1>Solar Monitoring</h1>
-<p>Hello World!</p>
-<p>Solarwerte: </p>
+  <div class="container" >
+
+  <h1>Solar Monitoring</h1>
+  <p>Hello World!</p>
+  <p2>Solarwerte: </p2>
 
 
   <ul id="werte">
     <li id="AP"></li>
     <li id="AV"></li>
     <li id="BV"></li>
-    <li id="OpA">Graph:</li>
+    <!--<li id="OpA"></li>-->
+
   </ul>
+    </div>
 
 <div id="myChart">
 </div>
@@ -40,8 +43,21 @@
 <button id="wahl" onclick="getOption()"> Anwenden </button>
 
 </div>
+
 <div id="myChart3">
+
 </div>
+
+  <label for="start">Start date:</label>
+
+  <input type="date" id="start" name="trip-start">
+
+
+  <button id="datumswahl" onclick="getOption()"> Anwenden </button>
+  <div id="myChart4">
+
+  </div>
+
 
 </body>
 
