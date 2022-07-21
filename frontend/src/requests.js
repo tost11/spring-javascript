@@ -33,6 +33,18 @@ async function fetchWh(){
     return await response.json();
 }
 
+async function fetchDate(){
+    const response = await fetch("/api/data/get/oldestDate", {
+        method: 'GET',
+        headers: {
+            'Conent-Type': 'application/json'
 
-export {fetchLatest, fetchWithSeconds, fetchWh}
+        }
+    });
+    return await response.json()
+
+}
+
+
+export {fetchLatest, fetchWithSeconds, fetchWh, fetchDate}
 
