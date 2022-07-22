@@ -55,7 +55,8 @@ while isrunning:
 
         client.close()
     else:
-        sleep(5)
+        print("Not Connected try again in 5s!")
+        time.sleep(5)
 
 """
 inputVoltage
