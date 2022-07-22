@@ -11,6 +11,18 @@ async function fetchLatest(){
     return await response.json();
 }
 
+async function getWerte() {
+    const response = await fetch("/api/data/get/latest", {
+        method: 'GET',
+
+        headers: {
+            'Conent-Type': 'application/json'
+
+        }
+    });
+    return await response.json()
+}
+
 async  function fetchWithSeconds(seconds){
     const response = await fetch("/api/data/get/" + seconds, {
         method: 'GET',
@@ -46,5 +58,5 @@ async function fetchDate(){
 }
 
 
-export {fetchLatest, fetchWithSeconds, fetchWh, fetchDate}
+export {fetchLatest, fetchWithSeconds, fetchWh, fetchDate, getWerte}
 

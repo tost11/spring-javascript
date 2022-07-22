@@ -1,4 +1,6 @@
 import {fetchWithSeconds} from "./requests";
+import {getWerte} from "./requests";
+
 
 
 //
@@ -45,9 +47,10 @@ async function drawChart() {
     setInterval(async function () {
 
         const json = await getWerte();
+        //console.log(json)
         const wert1=json.inputVoltage*json.inputAmpere
         const wert2=json.batteryVoltage*json.outputAmpere
-        console.log("p: ", wert1)
+        //console.log("p: ", wert1)
         counter++;
         if(counter===400){
             graph1();
@@ -114,6 +117,7 @@ async function batteryChart() {
     let index = 0;
     let counter=0;
     setInterval(async function () {
+        const json = await getWerte();
         const wert=json.batteryVoltage;
 
         counter++;
