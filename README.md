@@ -36,26 +36,19 @@ INSTALLATION
 * Öffne das Projekt spring-javascript
 
 ### Gebe diese Commands in der Konsole ein:
-* ls
-* cd frontend
-* sudo chown -R $(whoami) /usr/local/etc/bash_completion.d /usr/local/share/doc /usr/local/share/zsh /usr/local/share/zsh/site-functions /usr/local/var/homebrew/locks
-* brew install git
-* xcode-select --install
-* ssh-keygen
-* cat .ssh/id_rsa.pub
-* git clone git@github.com:tost11/spring-javascript.git
-* cd spring-javascript
-* mvn clean install
-* npm install
+* mvn clean install (im Backendordner)
+* npm install (im Frontendordner)
+* npm run dev (im Frontendordner)
 
 
 ### Um die Datenbank verwenden zu können gib Folgendes in der Konsole ein:
-* docker start SolarPostgres
 * docker run --name SolarPostgres -p 5432:5432  -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+* docker start SolarPostgres (zum Neustarten)
+
 
 ### Python über die Konsole installieren:
-* brew install python
-* brew install pip3
+* install python3
+* install pip3
 * pip3 install pymodbus
 * pip3 install requests
 * python3 text.py
