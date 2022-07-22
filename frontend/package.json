@@ -6,8 +6,10 @@
   "scripts": {
     "clean-dist": "rimraf dist/*",
     "start": "npm run start-dev",
-    "start-dev": "webpack serve --config=dev.js"
+    "start-dev": "webpack serve --config=dev.js",
+    "build": "webpack"
   },
+
   "author": "jonas",
   "license": "ISC",
   "devDependencies": {

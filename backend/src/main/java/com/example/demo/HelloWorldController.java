@@ -28,10 +28,7 @@ public class HelloWorldController {
 
 
 
-  @GetMapping("/")
-  String test() {
-      return "Hello World";
-  }
+
 
     @RequestMapping(method=RequestMethod.POST, value="/api/data/add")
     public void neuesObj(@RequestBody Solardaten data){
