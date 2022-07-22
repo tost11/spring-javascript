@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +13,10 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -23,9 +26,14 @@ public class HelloWorldController {
 
   @Autowired
   private SolarRepository solarRepository;
+  @Autowired
+  private Environment environment;
 
   @PostConstruct
   private void initialise(){
+    environment.getActiveProfiles();
+
+
     var t = new Thread(()->{
       while (true){
         solarRepository.save(new Solardaten(1, 1, 12, 1));
@@ -37,17 +45,15 @@ public class HelloWorldController {
       }
     });
 
-    t.start();
+    if(Arrays.asList(environment.getActiveProfiles()).contains("local"))
+      t.start();
 
   }
 
 
 
 
-  @GetMapping("/")
-  String test() {
-      return "Hello World";
-  }
+
 
     @RequestMapping(method=RequestMethod.POST, value="/api/data/add")
     public void neuesObj(@RequestBody Solardaten data){
