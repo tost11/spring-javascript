@@ -20,12 +20,6 @@ window.onload = function () {
   graph2();
 }
 
-
-
-//
-//----------- Update der angezeigten Daten
-//
-
 window.latestData = async () => {
   const node = document.getElementById("AP")
   const node1 = document.getElementById("AV")
