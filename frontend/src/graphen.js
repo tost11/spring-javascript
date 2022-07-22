@@ -235,10 +235,16 @@ async function WerteAbDatum() {
 
     ]);
 
+
     let options = {
         title: "Zeitraum",
         hAxis: {
-            title: "Time"
+            title: "Stunden",
+            viewWindowMode:'explicit',
+            viewWindow: {
+                max: 0,
+                min: 24
+            }
         },
         vAxis: {
             title: "Watt"

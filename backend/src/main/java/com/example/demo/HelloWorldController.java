@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @RestController
@@ -129,30 +133,39 @@ public class HelloWorldController {
   List<Solardaten> getDatumData(@PathVariable Long tage) {
     List<Solardaten> werte = solarRepository.findAllByDateTimeAfterOrderByDateTime(ZonedDateTime.now().minusDays(tage));
     ArrayList<Solardaten> returns = new ArrayList<Solardaten>();
-    int i = 0;
+
+    ZonedDateTime start=ZonedDateTime.now().minusDays(tage);
+    long min=15;
+    long min2=0;
+    int counter=0;
     float IV = 0;
     float IA = 0;
     float BV = 0;
     float OA = 0;
 
-    for(Solardaten solar : werte){
-      IV += solar.getInputVoltage();
-      IA += solar.getInputAmpere();
-      BV += solar.getBatteryVoltage();
-      OA += solar.getOutputAmpere();
-      i++;
-      if(i >= werte.size() / 100){
-        IV /= i;
-        IA /= i;
-        BV /= i;
-        OA /= i;
+    for(int i=0; i<96; i++){
+      List<Solardaten> werte2=solarRepository.findAllByDateTimeBetweenOrderByDateTime(start.plusMinutes(min2), start.plusMinutes(min));
 
-        returns.add(new Solardaten(IV, IA, BV, OA));
+      min2=min2+15;
+      min=min+15;
 
-        i = 0;
-        IV = IA = BV = OA = 0.f;
+      for(Solardaten solar : werte2){
+        IV += solar.getInputVoltage();
+        IA += solar.getInputAmpere();
+        BV += solar.getBatteryVoltage();
+        OA += solar.getOutputAmpere();
       }
-    }
+      int groesse=werte2.size();
+      IV /= groesse;
+      IA /= groesse;
+      BV /= groesse;
+      OA /= groesse;
+      returns.add(new Solardaten(IV, IA, BV, OA));
+
+      IV = IA = BV = OA = 0.f;
+
+      }
+
 
     if(!returns.isEmpty())
       return returns;
