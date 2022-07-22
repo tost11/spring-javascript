@@ -22,18 +22,7 @@ public class HelloWorldController {
 
   @PostConstruct
   private void initialise(){
-    var t = new Thread(()->{
-      while (true){
-        solarRepository.save(new Solardaten(1, 1, 12, 1));
-        try {
-          Thread.sleep(5000);
-        } catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-      }
-    });
 
-    t.start();
 
   }
 
