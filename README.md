@@ -74,5 +74,5 @@ MAINTAINERS
 * Daniel Szumski
 * Helen Noske
 
-Gesponsert von:
-* Micromata, besuche https://www.micromata.de/ für mehr Informationen
+#### Gesponsert von:
+* Micromata (besuche https://www.micromata.de/ für mehr Informationen.)
