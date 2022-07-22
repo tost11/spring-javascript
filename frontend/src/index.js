@@ -57,18 +57,18 @@ async function whanzeigen(){
 setInterval(whanzeigen, 60000)
 setInterval(latestData , 10000 );
 
-window.getWerte = async () => {
-  const response = await fetch("/api/data/get/latest", {
-    method: 'GET',
+/*window.getWerte1 = async () => {
 
-    headers: {
-      'Conent-Type': 'application/json'
-
-    }
-  });
-  const myJson = await response.json()
+  try{
+    const myJson=await getWerte()
+    return myJson
+  }catch{
+    console.log("Keime Daten da!")
+  }
 
 }
+
+ */
 
 
 
