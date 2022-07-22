@@ -1,5 +1,6 @@
 import "./style.css";
-
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 let id=0;
 let id2=0;
