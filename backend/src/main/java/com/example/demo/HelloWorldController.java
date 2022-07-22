@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,9 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -19,10 +22,27 @@ public class HelloWorldController {
 
   @Autowired
   private SolarRepository solarRepository;
+  @Autowired
+  private Environment environment;
 
   @PostConstruct
   private void initialise(){
+    environment.getActiveProfiles();
 
+
+    var t = new Thread(()->{
+      while (true){
+        solarRepository.save(new Solardaten(1, 1, 12, 1));
+        try {
+          Thread.sleep(5000);
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    });
+
+    if(Arrays.asList(environment.getActiveProfiles()).contains("local"))
+      t.start();
 
   }
 
