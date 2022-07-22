@@ -52,7 +52,7 @@ async function drawChart() {
         if(counter===400){
             graph1();
         }
-        id2++;
+
         data.addRow([index, wert1, wert2]);
         chart.draw(data, options);
         index++;
